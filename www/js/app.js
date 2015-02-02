@@ -54,31 +54,51 @@ angular.module('starter').controller('CombinationCtrl',['$scope','$ionicGesture'
       [5,6,8]
   ];
 
-  $ionicGesture.on('dragstart',function(e){
+  $ionicGesture.on('dragstart',function(e){ console.log('drag start');
     reset(false);
 
-    if (classy.hasClass(e.target,'area') && !classy.hasClass('active')){
-      var areaId = e.target.dataset.area;
+    // Bubble up
+    var noddy = e.target;
+    while(!classy.hasClass(noddy,'area') && noddy) {
+      noddy = noddy.parentNode;
+    }
+
+    if (!noddy) return;
+
+    if (!classy.hasClass(noddy,'active')){
+      var areaId = noddy.dataset.area;
 
       if ($scope.currentComb.indexOf(areaId)<0){
-        classy.addClass(e.target,'active');
+        classy.addClass(noddy,'active');
         $scope.currentComb.push(areaId);
       }
     }
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  $ionicGesture.on('drag',function(e){
-    if (classy.hasClass(e.target,'area')){
-      var areaId = parseInt(e.target.dataset.area);
+  $ionicGesture.on('drag',function(e){ console.log('dragging');
+    // Bubble up
+    var noddy = e.target;
+    while(!classy.hasClass(noddy,'area') && noddy) {
+      noddy = noddy.parentNode;
+    }
 
-      if ($scope.currentComb.indexOf(areaId)<0 && $scope.currentComb.length && $scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(areaId)>=0){
-        classy.addClass(e.target,'active');
-        $scope.currentComb.push(areaId);
+    if (!noddy) return;
+
+    var areaId = parseInt(noddy.dataset.area);
+
+    if ($scope.currentComb.indexOf(areaId)<0){
+      if ($scope.currentComb.length){
+        if ($scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(areaId)<0){
+          return;
+        }
       }
+
+      classy.addClass(noddy,'active');
+      $scope.currentComb.push(areaId);
     }
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  $ionicGesture.on('dragend',function(e){
+  $ionicGesture.on('dragend',function(e){ console.log('dragend');
     reset();
   },angular.element(document.getElementsByClassName('combination')[0]));
 
