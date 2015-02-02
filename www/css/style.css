@@ -1,0 +1,25 @@
+/* Empty. Add your own CSS if you like */
+body {
+    cursor: url('http://ionicframework.com/img/finger.png'), auto;
+}
+
+.combination {
+    width:400px;
+    margin:100px auto;
+    border:1px solid #000;
+}
+
+.area {
+    width:40px;
+    height:40px;
+    margin:40px;
+    text-align:center;
+    color:#fff;
+    line-height:40px;
+    background:#ccc;
+    border-radius: 100%;
+}
+
+.area.active {
+    background:#000;
+}

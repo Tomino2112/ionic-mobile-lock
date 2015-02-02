@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
+    <title></title>
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <!-- IF using Sass (run gulp sass first), then uncomment below and remove the CSS includes above
+    <link href="css/ionic.app.css" rel="stylesheet">
+    -->
+
+    <!-- ionic/angularjs js -->
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+
+    <!-- cordova script (this will be a 404 during development) -->
+    <script src="cordova.js"></script>
+
+    <!-- your app's js -->
+    <script src="js/app.js"></script>
+  </head>
+  <body ng-app="starter">
+
+    <ion-pane>
+      <ion-header-bar class="bar-stable">
+        <h1 class="title">Ionic Blank Starter</h1>
+      </ion-header-bar>
+      <ion-content ng-controller="CombinationCtrl">
+        <div class="combination">
+          <div class="row row1">
+            <div class="area area1" data-area="1">1</div>
+            <div class="area area2" data-area="2">2</div>
+            <div class="area area3" data-area="3">3</div>
+          </div>
+
+          <div class="row row2">
+            <div class="area area4" data-area="4">4</div>
+            <div class="area area5" data-area="5">5</div>
+            <div class="area area6" data-area="6">6</div>
+          </div>
+
+          <div class="row row3">
+            <div class="area area7" data-area="7">7</div>
+            <div class="area area8" data-area="8">8</div>
+            <div class="area area9" data-area="9">9</div>
+          </div>
+        </div>
+      </ion-content>
+    </ion-pane>
+  </body>
+</html>
