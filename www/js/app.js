@@ -3,23 +3,46 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
-
-.run(function($ionicPlatform) {
-  $ionicPlatform.ready(function() {
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    if(window.cordova && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-    if(window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-  });
+var app = angular.module('starter', ['ionic']);
+app.config(function($stateProvider) {
+  $stateProvider
+      .state('standby', {
+        url: '/',
+        templateUrl: 'templates/standby/main.html',
+        controller: 'StandbyCtrl'
+      })
+      .state('standby.screenlock', {
+        templateUrl: 'templates/standby/screenlock.html',
+        controller: 'ScreenLockCtrl'
+      });
 });
 
+angular.module('starter').controller('StandbyCtrl',['$scope','$state',function($scope,$state){
+  $scope.footerButtons = {
+    back: false,
+    dialer: true,
+    lock: true,
+    camera: true
+  };
 
-angular.module('starter').controller('CombinationCtrl',['$scope','$ionicGesture',function($scope,$ionicGesture){
+  $scope.goToScreenLock = function(){
+    $scope.toggleFooterButtons();
+    $state.go('standby.screenlock');
+  };
+
+  $scope.goToStandby = function(){
+    $scope.toggleFooterButtons();
+    $state.go('standby');
+  };
+
+  $scope.toggleFooterButtons = function(){
+    for (var k in $scope.footerButtons){
+      $scope.footerButtons[k] = !$scope.footerButtons[k];
+    }
+  };
+}]);
+
+angular.module('starter').controller('ScreenLockCtrl',['$scope','$ionicGesture',function($scope,$ionicGesture){
   var classy = {
     hasClass: function (ele, cls) {
       if (!ele || typeof ele.className === 'undefined') return false;
@@ -42,7 +65,10 @@ angular.module('starter').controller('CombinationCtrl',['$scope','$ionicGesture'
   $scope.lastComb = [];
   $scope.combination = '';
 
-  $scope.availableMoves = [ // array index+1 = area id
+  $scope.correctCombination = '12369';
+  $scope.result = '';
+
+  $scope.availableMoves = [ // array index+1 = point id
       [2,4,5],
       [1,3,4,5,6],
       [2,5,6],
@@ -54,69 +80,74 @@ angular.module('starter').controller('CombinationCtrl',['$scope','$ionicGesture'
       [5,6,8]
   ];
 
-  $ionicGesture.on('dragstart',function(e){ console.log('drag start');
+  $ionicGesture.on('dragstart',function(e){
     reset(false);
 
     // Bubble up
     var noddy = e.target;
-    while(!classy.hasClass(noddy,'area') && noddy) {
+    while(!classy.hasClass(noddy,'point') && noddy) {
       noddy = noddy.parentNode;
     }
 
     if (!noddy) return;
 
     if (!classy.hasClass(noddy,'active')){
-      var areaId = noddy.dataset.area;
+      var pointId = noddy.dataset.point;
 
-      if ($scope.currentComb.indexOf(areaId)<0){
+      if ($scope.currentComb.indexOf(pointId)<0){
         classy.addClass(noddy,'active');
-        $scope.currentComb.push(areaId);
+        $scope.currentComb.push(pointId);
       }
     }
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  $ionicGesture.on('drag',function(e){ console.log('dragging');
+  $ionicGesture.on('drag',function(e){
     // Bubble up
     var noddy = e.target;
-    while(!classy.hasClass(noddy,'area') && noddy) {
+    while(!classy.hasClass(noddy,'point') && noddy) {
       noddy = noddy.parentNode;
     }
 
     if (!noddy) return;
 
-    var areaId = parseInt(noddy.dataset.area);
+    var pointId = parseInt(noddy.dataset.point);
 
-    if ($scope.currentComb.indexOf(areaId)<0){
+    if ($scope.currentComb.indexOf(pointId)<0){
       if ($scope.currentComb.length){
-        if ($scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(areaId)<0){
+        if ($scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(pointId)<0){
           return;
         }
       }
 
       classy.addClass(noddy,'active');
-      $scope.currentComb.push(areaId);
+      $scope.currentComb.push(pointId);
     }
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  $ionicGesture.on('dragend',function(e){ console.log('dragend');
+  $ionicGesture.on('dragend',function(e){
     reset();
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  function reset(showCombination){
-    if (typeof showCombination === 'undefined'){
-      showCombination = true;
+  function reset(testCombination){
+    if (typeof testCombination === 'undefined'){
+      testCombination = true;
     }
 
-    $scope.lastComb = angular.copy($scope.currentComb);
+    if (testCombination){
+      if ($scope.currentComb.join('') === $scope.correctCombination){
+        alert('Thats right!');
+        $scope.result = 'Thats right!';
+      } else {
+        alert('Wrong Pattern');
+        $scope.result = 'Wrong Pattern';
+      }
+    }
+
     $scope.currentComb = [];
 
-    if (showCombination){
-      alert($scope.lastComb);
-    }
-
-    var areas = document.getElementsByClassName('area');
-    for(var i=0;i<areas.length;i++){
-      classy.removeClass(areas[i],'active');
+    var points = document.getElementsByClassName('point');
+    for(var i=0;i<points.length;i++){
+      classy.removeClass(points[i],'active');
     }
   }
 }]);
