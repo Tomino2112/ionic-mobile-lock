@@ -10,23 +10,37 @@ body {
 }
 
 .area {
-    margin:40px;
-    padding:10px;
+    position:relative;
+    margin:20px;
+    width:30px;
+    height:30px;
     border:1px solid #ccc;
     border-radius:100%;
 }
 
 .area span {
     display:block;
-    width:40px;
-    height:40px;
+    position:absolute;
+    top:9px;
+    left:9px;
+    width:10px;
+    height:10px;
     text-align:center;
     color:#fff;
-    line-height:40px;
+    line-height:10px;
     background:#ccc;
     border-radius: 100%;
 }
 
 .area.active span {
     background:#000;
+    animation-name: blob;
+    animation-duration:0.2s;
+    animation-iteration-count: 1;
+}
+
+@keyframes blob {
+    0%   {left:9px; top:9px;width:10px;height:10px;}
+    50%  {left:4px; top:4px;width:20px;height:20px;}
+    100% {left:9px; top:9px;width:10px;height:10px;}
 }
