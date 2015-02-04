@@ -17,9 +17,14 @@ var app = angular.module('starter', ['ionic'])
 app.config(function($stateProvider) {
   $stateProvider
       .state('standby', {
-        url: '/',
+        url: '',
         templateUrl: 'templates/standby/main.html',
         controller: 'StandbyCtrl'
+      })
+      .state('standby.notifications',{
+        url:'/',
+        templateUrl:'templates/standby/notifications.html',
+        controller: 'NotificationsCtrl'
       })
       .state('standby.screenlock', {
         templateUrl: 'templates/standby/screenlock.html',
@@ -35,14 +40,17 @@ angular.module('starter').controller('StandbyCtrl',['$scope','$state',function($
     camera: true
   };
 
+  // Automatically go to notifications
+  $state.go('standby.notifications');
+
   $scope.goToScreenLock = function(){
     $scope.toggleFooterButtons();
     $state.go('standby.screenlock');
   };
 
-  $scope.goToStandby = function(){
+  $scope.goToNotifications = function(){
     $scope.toggleFooterButtons();
-    $state.go('standby');
+    $state.go('standby.notifications');
   };
 
   $scope.toggleFooterButtons = function(){
@@ -52,7 +60,17 @@ angular.module('starter').controller('StandbyCtrl',['$scope','$state',function($
   };
 }]);
 
-angular.module('starter').controller('ScreenLockCtrl',['$scope','$ionicGesture',function($scope,$ionicGesture){
+angular.module('starter').controller('NotificationsCtrl',['$scope','$interval',function($scope,$interval){
+  $scope.tickInterval = 60; //s
+  $scope.clock = Date.now();
+  $scope.tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
+
+  $interval(function(){
+    $scope.clock = Date.now();
+  },$scope.tickInterval*1000);
+}]);
+
+angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ionicGesture',function($scope,$timeout,$ionicGesture){
   var classy = {
     hasClass: function (ele, cls) {
       if (!ele || typeof ele.className === 'undefined') return false;
@@ -135,25 +153,24 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$ionicGesture',
   },angular.element(document.getElementsByClassName('combination')[0]));
 
   $ionicGesture.on('dragend',function(e){
-    reset();
-  },angular.element(document.getElementsByClassName('combination')[0]));
-
-  function reset(testCombination){
-    if (typeof testCombination === 'undefined'){
-      testCombination = true;
-    }
-
-    if (testCombination){
-      if ($scope.currentComb.join('') === $scope.correctCombination){
-        alert('Thats right!');
+    if ($scope.currentComb.length) {
+      if ($scope.currentComb.join('') === $scope.correctCombination) {
+        //alert('Thats right!');
         $scope.result = 'Thats right!';
       } else {
-        alert('Wrong Pattern');
+        //alert('Wrong Pattern');
         $scope.result = 'Wrong Pattern';
       }
     }
 
+    $timeout(function(){
+      reset();
+    },800);
+  },angular.element(document.getElementsByClassName('combination')[0]));
+
+  function reset(){
     $scope.currentComb = [];
+    $scope.result = '';
 
     var points = document.getElementsByClassName('point');
     for(var i=0;i<points.length;i++){
