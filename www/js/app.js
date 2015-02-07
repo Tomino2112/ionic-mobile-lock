@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-var app = angular.module('starter', ['ionic'])
+var app = angular.module('starter', ['ionic','ngCordova'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -65,12 +65,13 @@ angular.module('starter').controller('NotificationsCtrl',['$scope','$interval',f
   $scope.clock = Date.now();
   $scope.tomorrow = new Date(new Date().getTime() + 24 * 60 * 60 * 1000);
 
+    // @todo: MUST manually cancel interval
   $interval(function(){
     $scope.clock = Date.now();
   },$scope.tickInterval*1000);
 }]);
 
-angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ionicGesture',function($scope,$timeout,$ionicGesture){
+angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$interval','$ionicGesture','$cordovaVibration',function($scope,$timeout,$interval,$ionicGesture,$cordovaVibration){
   var classy = {
     hasClass: function (ele, cls) {
       if (!ele || typeof ele.className === 'undefined') return false;
@@ -95,6 +96,11 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ion
 
   $scope.correctCombination = '12369';
   $scope.result = '';
+    $scope.blockTries = 5;
+    $scope.tries = $scope.blockTries*2; // Double it for now becaue events firing twice...
+    $scope.block = false;
+    $scope.blockCountDown = null;
+    $scope.blockLength = 30;
 
   $scope.availableMoves = [ // array index+1 = point id
       [2,4,5],
@@ -108,7 +114,11 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ion
       [5,6,8]
   ];
 
-  $ionicGesture.on('dragstart',function(e){
+  $ionicGesture.on('touch',function(e){
+      var root = document.getElementsByClassName('screenlock')[0];
+      var $scope = angular.element(root).scope();
+
+      if ($scope.block) return;
     reset(false);
 
     // Bubble up
@@ -119,17 +129,15 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ion
 
     if (!noddy) return;
 
-    if (!classy.hasClass(noddy,'active')){
-      var pointId = noddy.dataset.point;
-
-      if ($scope.currentComb.indexOf(pointId)<0){
-        classy.addClass(noddy,'active');
-        $scope.currentComb.push(pointId);
-      }
-    }
+    highlighPoint(noddy);
   },angular.element(document.getElementsByClassName('combination')[0]));
 
   $ionicGesture.on('drag',function(e){
+      var root = document.getElementsByClassName('screenlock')[0];
+      var $scope = angular.element(root).scope();
+
+      if ($scope.block) return;
+
     // Bubble up
     var noddy = e.target;
     while(!classy.hasClass(noddy,'point') && noddy) {
@@ -138,28 +146,30 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ion
 
     if (!noddy) return;
 
-    var pointId = parseInt(noddy.dataset.point);
-
-    if ($scope.currentComb.indexOf(pointId)<0){
-      if ($scope.currentComb.length){
-        if ($scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(pointId)<0){
-          return;
-        }
-      }
-
-      classy.addClass(noddy,'active');
-      $scope.currentComb.push(pointId);
-    }
+    highlighPoint(noddy);
   },angular.element(document.getElementsByClassName('combination')[0]));
 
-  $ionicGesture.on('dragend',function(e){
+  $ionicGesture.on('release',function(e){
+      var root = document.getElementsByClassName('screenlock')[0];
+      var $scope = angular.element(root).scope();
+
+      if ($scope.block) return;
+
     if ($scope.currentComb.length) {
       if ($scope.currentComb.join('') === $scope.correctCombination) {
-        //alert('Thats right!');
-        $scope.result = 'Thats right!';
+        $scope.$apply(function(){
+          $scope.result = 'Thats right!';
+        });
       } else {
-        //alert('Wrong Pattern');
-        $scope.result = 'Wrong Pattern';
+          $scope.$apply(function(){
+              $scope.result = 'Wrong Pattern';
+              $scope.tries--;
+          });
+
+          if ($scope.tries === 0){
+              alert('You have incorrectly drawn your unlock pattern '+$scope.blockTries+' times. Try again in '+$scope.blockLength+' seconds.');
+              blockScreenlock();
+          }
       }
     }
 
@@ -168,9 +178,61 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$ion
     },800);
   },angular.element(document.getElementsByClassName('combination')[0]));
 
+    function highlighPoint(el, first){
+        if (typeof first === 'undefined'){
+            first = false;
+        }
+
+        var pointId = parseInt(el.dataset.point);
+
+        var root = document.getElementsByClassName('screenlock')[0];
+        var $scope = angular.element(root).scope();
+
+        if ($scope.currentComb.indexOf(pointId)<0){
+            if ($scope.currentComb.length){
+                if ($scope.availableMoves[$scope.currentComb[$scope.currentComb.length-1]-1].indexOf(pointId)<0 && !first){
+                    return;
+                }
+            }
+
+            classy.addClass(el,'active');
+            $scope.currentComb.push(pointId);
+            if (ionic.Platform.isWebView()) {
+                $cordovaVibration.vibrate(30);
+            }
+        }
+    }
+
+    function blockScreenlock(){
+        var root = document.getElementsByClassName('screenlock')[0];
+        var $scope = angular.element(root).scope();
+
+        $scope.$apply(function(){
+            $scope.block = true;
+            $scope.result = 'Try again in '+$scope.blockLength+'s';
+        });
+
+        $scope.blockCountDown = $interval(function(count){
+            $scope.blockLength--;
+            $scope.result = 'Try again in '+$scope.blockLength+' s';
+
+            if (!$scope.blockLength){
+                $scope.block = false;
+                $scope.result = '';
+                $scope.tries = $scope.blockTries*2;
+                $scope.blockLength = 30;
+            }
+        },1000,$scope.blockLength);
+    }
+
   function reset(){
+      var root = document.getElementsByClassName('screenlock')[0];
+      var $scope = angular.element(root).scope();
+
     $scope.currentComb = [];
-    $scope.result = '';
+      if (!$scope.block) {
+          $scope.result = '';
+      }
 
     var points = document.getElementsByClassName('point');
     for(var i=0;i<points.length;i++){

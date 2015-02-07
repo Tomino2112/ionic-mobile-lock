@@ -120,6 +120,15 @@ body {
     animation-name: blob;
     animation-duration:0.15s;
     animation-iteration-count: 1;
+    -webkit-animation-name: blob;
+    -webkit-animation-duration:0.15s;
+    -webkit-animation-iteration-count: 1;
+}
+
+@-webkit-keyframes blob {
+    0%   {left:25%; top:25%;width:50%;height:50%;}
+    50%  {left:12%; top:12%;width:76%;height:76%;}
+    100% {left:25%; top:25%;width:50%;height:50%;}
 }
 
 @keyframes blob {
