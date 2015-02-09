@@ -8,9 +8,7 @@ var app = angular.module('starter', ['ionic','ngCordova'])
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
     ionic.Platform.fullScreen();
-    if(window.StatusBar) {
       StatusBar.hide();
-    }
   });
 });
 
