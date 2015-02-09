@@ -5,7 +5,8 @@
 // the 2nd parameter is an array of 'requires'
 var app = angular.module('starter', ['ionic','ngCordova'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $ionicConfig) {
+        $ionicConfig.views.transition('android');
   $ionicPlatform.ready(function() {
     ionic.Platform.fullScreen();
       StatusBar.hide();

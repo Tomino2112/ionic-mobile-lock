@@ -1,5 +1,5 @@
 <div class="standby">
-    <ion-nav-view></ion-nav-view>
+    <ion-nav-view ng-animate="slide-in-up"></ion-nav-view>
 
     <div class="bar bar-footer">
         <div class="row">
@@ -14,7 +14,7 @@
                 </button>
             </div>
             <div class="col text-center" ng-show="footerButtons.lock">
-                <button class="button button-clear text-center" ng-click="goToScreenLock()">
+                <button class="button button-clear text-center" ng-click="goToScreenLock()" on-swipe-up="goToScreenLock()">
                     <span class="icon ioniconsub ion-android-lock"></span>
                 </button>
             </div>
