@@ -138,7 +138,8 @@ angular.module('starter').controller('ScreenLockCtrl',['$scope','$timeout','$int
       if ($scope.block) return;
 
     // Bubble up
-    var noddy = e.target;
+    var noddy = e.target; console.log(e);
+
     while(!classy.hasClass(noddy,'point') && noddy) {
       noddy = noddy.parentNode;
     }
