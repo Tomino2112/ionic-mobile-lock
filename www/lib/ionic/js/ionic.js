@@ -1832,7 +1832,7 @@ window.ionic.version = '1.0.0-beta.14';
           // block the browser events
           if( (inst.options.drag_block_vertical && ionic.Gestures.utils.isVertical(ev.direction)) ||
               (inst.options.drag_block_horizontal && !ionic.Gestures.utils.isVertical(ev.direction))) {
-                //ev.preventDefault();
+                ev.preventDefault();
               }
           break;
 

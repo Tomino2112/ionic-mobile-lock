@@ -1,11 +1,11 @@
-<div class="notifications">
+<div class="notifications" on-swipe-up="goToScreenLock()">
     <div class="row">
         <div class="col-80 col-offset-10">
             <div class="date-time-widget text-center">
                 <div class="time">{{clock | date:'HH:mm'}}</div>
                 <div class="date">
                     <span>{{clock | date:'EEE, MMM d'}}</span>
-                    <span class="text-muted"><span class="icon ion-android-alarm-clock"></span> {{tomorrow | date:'EEE'}} 07:00</span>
+                    <span class="text-muted"><span class="icon ioniconsub ion-android-alarm-clock"></span> {{tomorrow | date:'EEE'}} 07:00</span>
                 </div>
             </div>
         </div>

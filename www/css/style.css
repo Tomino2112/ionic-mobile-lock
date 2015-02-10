@@ -32,8 +32,13 @@ body {
 }
 
 .bar-footer .button.button-clear .icon:before {
-    color:rgba(255,255,255,0.8);
-    font-size:01em;
+    color:rgba(255,255,255,0.6);
+    font-size:1.1em;
+}
+
+.bar-footer .button.button-clear .icon.ion-android-lock:before,
+.bar-footer .button.button-clear .icon.ion-ios-arrow-back:before{
+    font-size:1.3em;
 }
 
 .standby {
@@ -68,12 +73,12 @@ body {
 .notifications .date-time-widget .time {
     margin-bottom:5px;
     font-weight:100;
-    font-size:5.7em;
+    font-size:7em;
     line-height:1em;
 }
 
 .notifications .date-time-widget .date {
-    font-size:0.9em;
+    font-size:1em;
     line-height:1em;
 }
 
@@ -91,8 +96,8 @@ body {
 
 .lock-result {
     color:#fff;
-    font-size: 0.85em;
-    font-weight:200;
+    font-size: 1em;
+    font-weight:400;
 }
 
 .point {
@@ -100,6 +105,9 @@ body {
     width:9vw;
     height:8.5vw;
     margin:7vw auto;
+    padding:0;
+    font-size:0;
+    line-height:0;
     /*border:1px solid #ccc;*/
     border-radius:100%;
 }
@@ -141,7 +149,7 @@ body {
     position:absolute;
     bottom:8%;
     width:100%;
-    font-size:0.8em;
+    font-size:1em;
     text-transform:uppercase;
-    color: #e3e3e3;
+    color: rgba(255,255,255,0.8);
 }
