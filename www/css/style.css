@@ -94,6 +94,23 @@ body {
     width:100%;
 }
 
+.combination {
+    /*border:1px solid rgba(255,255,255,0.2);*/
+}
+
+.screenlock.finished .line,
+.screenlock.finished .point.active span{
+    background:#DD5825;
+}
+
+.line {
+    position:absolute;
+    width:4px;
+    background:#fff;
+    border-radius:4px;
+    transform-origin: top left;
+}
+
 .lock-result {
     color:#fff;
     font-size: 1em;
@@ -108,7 +125,7 @@ body {
     padding:0;
     font-size:0;
     line-height:0;
-    border:1px solid rgba(255,255,255,0.2);
+    /*border:1px solid rgba(255,255,255,0.2);*/
     border-radius:100%;
 }
 
@@ -124,7 +141,7 @@ body {
 }
 
 .point.active span {
-    background:#DD5825;
+    /*background:#DD5825;*/
     animation-name: blob;
     animation-duration:0.15s;
     animation-iteration-count: 1;
